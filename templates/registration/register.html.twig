@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<main class="auth-page auth-page-register">
+    <section class="auth-shell auth-shell-register" aria-labelledby="register-title">
+        <div class="auth-logo" aria-hidden="true">$</div>
+        <h1 id="register-title">Créer votre compte</h1>
+        <p class="auth-switch">Ou <a href="{{ path('app_login') }}">connectez-vous à votre compte</a></p>
+
+        {{ form_errors(registrationForm) }}
+
+        {{ form_start(registrationForm, {'attr': {'class': 'auth-card auth-card-register'}}) }}
+            <div class="auth-grid">
+                <div class="auth-field">
+                    {{ form_label(registrationForm.first_name, 'Prénom') }}
+                    {{ form_widget(registrationForm.first_name, {'attr': {'placeholder': 'Jean'}}) }}
+                    {{ form_errors(registrationForm.first_name) }}
+                </div>
+
+                <div class="auth-field">
+                    {{ form_label(registrationForm.last_name, 'Nom') }}
+                    {{ form_widget(registrationForm.last_name, {'attr': {'placeholder': 'Dupont'}}) }}
+                    {{ form_errors(registrationForm.last_name) }}
+                </div>
+            </div>
+
+            <div class="auth-field">
+                {{ form_label(registrationForm.company_name, 'Raison Sociale') }}
+                {{ form_widget(registrationForm.company_name, {'attr': {'placeholder': 'Tech Solutions'}}) }}
+                {{ form_errors(registrationForm.company_name) }}
+            </div>
+
+            <div class="auth-field">
+                {{ form_label(registrationForm.iban, 'IBAN') }}
+                {{ form_widget(registrationForm.iban, {'attr': {'placeholder': 'FR76 1234 5678 9012 3456 7890 123'}}) }}
+                {{ form_errors(registrationForm.iban) }}
+            </div>
+
+            <div class="auth-field">
+                {{ form_label(registrationForm.email, 'Adresse Email') }}
+                {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'contact@entreprise.fr'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="auth-field">
+                {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': 'password'}}) }}
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            {{ form_widget(registrationForm._token) }}
+
+            <button type="submit" class="auth-submit">Créer mon compte</button>
+        {{ form_end(registrationForm, {'render_rest': false}) }}
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<main class="auth-page auth-page-login">
+    <section class="auth-shell" aria-labelledby="login-title">
+        <div class="auth-logo" aria-hidden="true">$</div>
+        <h1 id="login-title">Connectez-vous</h1>
+        <p class="auth-switch">Ou <a href="{{ path('app_register') }}">créez un compte gratuitement</a></p>
+
+        <form method="post" class="auth-card">
+            {% if error %}
+                <div class="auth-alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="auth-alert">
+                    Connecté en tant que {{ app.user.userIdentifier }}.
+                    <a href="{{ logout_path() }}">Se déconnecter</a>
+                </div>
+            {% endif %}
+
+            <div class="auth-field">
+                <label for="inputEmail">Adresse Email</label>
+                <input type="email" value="{{ last_username ?: 'contact@entreprise.fr' }}" name="email" id="inputEmail" autocomplete="email" required autofocus>
+            </div>
+
+            <div class="auth-field">
+                <label for="inputPassword">Mot de passe</label>
+                <input type="password" name="password" id="inputPassword" value="password" autocomplete="current-password" required>
+            </div>
+
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+            <button class="auth-submit" type="submit">Se connecter</button>
+        </form>
+    </section>
+</main>
+{% endblock %}

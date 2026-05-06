@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau client{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Nouveau client</h1>
+    <a href="{{ path('app_client_index') }}">← Retour à la liste</a>
+
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.address) }}
+        {{ form_row(form.siret) }}
+        {{ form_row(form.rib) }}
+        <button type="submit">Créer</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
