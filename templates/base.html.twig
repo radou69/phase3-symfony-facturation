@@ -1,24 +1,144 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}FacturSaaS{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stylesheets %}{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; display: flex; min-height: 100vh; }
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px; min-height: 100vh; background: #fff;
+            border-right: 1px solid #e9ecef; display: flex;
+            flex-direction: column; padding: 24px 16px; position: fixed; top: 0; left: 0; bottom: 0;
+        }
+        .sidebar-logo {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1.2rem; font-weight: 700; color: #2563eb;
+            margin-bottom: 32px; text-decoration: none;
+        }
+        .sidebar-logo-icon {
+            background: #2563eb; color: white; width: 32px; height: 32px;
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+        }
+        .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-nav a {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 8px; text-decoration: none; color: #6b7280;
+            font-size: 0.95rem; transition: all 0.15s;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: #eff6ff; color: #2563eb; font-weight: 500;
+        }
+        .sidebar-footer { border-top: 1px solid #e9ecef; padding-top: 16px; }
+        .sidebar-user {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+        }
+        .sidebar-avatar {
+            width: 36px; height: 36px; background: #dbeafe; color: #2563eb;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+        }
+        .sidebar-user-info { font-size: 0.85rem; }
+        .sidebar-user-info .name { font-weight: 600; color: #111827; }
+        .sidebar-user-info .email { color: #6b7280; }
+        .sidebar-logout {
+            display: flex; align-items: center; gap: 8px;
+            color: #ef4444; text-decoration: none; font-size: 0.9rem; font-weight: 500;
+        }
+        .sidebar-logout:hover { color: #dc2626; }
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+        /* MAIN */
+        .main-content { margin-left: 240px; flex: 1; padding: 40px; }
+
+        /* CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e9ecef; }
+        .stat-card .icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 1.2rem; }
+        .stat-card .label { color: #6b7280; font-size: 0.85rem; margin-bottom: 4px; }
+        .stat-card .value { font-size: 1.5rem; font-weight: 700; color: #111827; }
+
+        /* BUTTONS */
+        .btn { padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: none; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+
+        /* TABLE */
+        .card { background: #fff; border-radius: 12px; border: 1px solid #e9ecef; overflow: hidden; }
+        .card-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; }
+        .card-header h1 { font-size: 1.4rem; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; }
+        table th { padding: 12px 24px; text-align: left; font-size: 0.85rem; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e9ecef; }
+        table td { padding: 16px 24px; border-bottom: 1px solid #f3f4f6; color: #111827; font-size: 0.9rem; }
+        table tr:last-child td { border-bottom: none; }
+        .action-btn { background: none; border: none; cursor: pointer; padding: 4px; color: #6b7280; }
+        .action-btn.edit { color: #2563eb; }
+        .action-btn.delete { color: #ef4444; }
+
+        /* BADGE */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-draft { background: #f3f4f6; color: #6b7280; }
+
+        /* QUICK ACTIONS */
+        .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+        .quick-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 20px 24px; text-decoration: none; color: #111827; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; }
+        .quick-card:hover { border-color: #2563eb; }
+        .quick-card.featured { background: #eff6ff; border-color: #bfdbfe; }
+        .quick-card .title { font-weight: 600; margin-bottom: 4px; }
+        .quick-card.featured .title { color: #2563eb; }
+        .quick-card .subtitle { font-size: 0.82rem; color: #6b7280; }
+        .quick-card.featured .subtitle { color: #3b82f6; }
+    </style>
+</head>
+<body>
+<aside class="sidebar">
+    <a href="{{ path('app_dashboard') }}" class="sidebar-logo">
+        <div class="sidebar-logo-icon">$</div>
+        FacturSaaS
+    </a>
+    <nav class="sidebar-nav">
+        <a href="{{ path('app_dashboard') }}" class="{{ app.request.attributes.get('_route') == 'app_dashboard' ? 'active' : '' }}">
+            📊 Dashboard
+        </a>
+        <a href='#' class="{{ app.request.attributes.get('_route') starts with 'app_invoice' ? 'active' : '' }}">
+            📄 Factures
+        </a>
+        <a href="{{ path('app_client_index') }}" class="{{ app.request.attributes.get('_route') starts with 'app_client' ? 'active' : '' }}">
+            👤 Clients
+        </a>
+        <a href="{{ path('app_product_index') }}" class="{{ app.request.attributes.get('_route') starts with 'app_product' ? 'active' : '' }}">
+            📦 Produits
+        </a>
+        <a <a href="#" class="{{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+            ⚙️ Profil
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <div class="sidebar-avatar">
+                {{ app.user ? (app.user.firstName|first ~ app.user.lastName|first)|upper : 'U' }}
+            </div>
+            <div class="sidebar-user-info">
+                <div class="name">{{ app.user ? app.user.companyName : '' }}</div>
+                <div class="email">{{ app.user ? app.user.email : '' }}</div>
+            </div>
+        </div>
+        <a href="{{ path('app_logout') }}" class="sidebar-logout">↪ Déconnexion</a>
+    </div>
+</aside>
+<main class="main-content">
+    {% block body %}{% endblock %}
+</main>
+</body>
 </html>
