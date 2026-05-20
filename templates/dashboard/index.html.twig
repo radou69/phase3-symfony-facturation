@@ -1,51 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes clients{% endblock %}
+{% block title %}Dashboard - FacturSaaS{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Mes clients</h1>
-    <a href="{{ path('app_client_new') }}">+ Nouveau client</a>
 
-    {% for message in app.flashes('success') %}
-        <div style="color: green;">{{ message }}</div>
-    {% endfor %}
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
 
-    {% if clients is empty %}
-        <p>Aucun client pour l'instant.</p>
-    {% else %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Téléphone</th>
-                    <th>Adresse</th>
-                    <th>SIRET</th>
-                    <th>RIB</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for client in clients %}
-                <tr>
-                    <td>{{ client.name }}</td>
-                    <td>{{ client.email }}</td>
-                    <td>{{ client.phone }}</td>
-                    <td>{{ client.address }}</td>
-                    <td>{{ client.siret ?? '-' }}</td>
-                    <td>{{ client.rib }}</td>
-                    <td>
-                        <a href="{{ path('app_client_edit', {id: client.id}) }}">Modifier</a>
-                        <form method="post" action="{{ path('app_client_delete', {id: client.id}) }}" style="display:inline">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_client_' ~ client.id) }}">
-                            <button type="submit" onclick="return confirm('Supprimer ce client ?')">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+{# 4 cards de stats #}
+<div class="grid grid-cols-4 gap-4 mb-6">
+
+    <div class="bg-white rounded-xl p-5 border border-gray-200">
+        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">€</div>
+        <div class="text-sm text-gray-500 mb-1">Chiffre d'affaires (Payé)</div>
+        <div class="text-2xl font-bold">0 €</div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border border-gray-200">
+        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-3">📄</div>
+        <div class="text-sm text-gray-500 mb-1">Factures en attente</div>
+        <div class="text-2xl font-bold">{{ invoices|length }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border border-gray-200">
+        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">👤</div>
+        <div class="text-sm text-gray-500 mb-1">Total Clients</div>
+        <div class="text-2xl font-bold">{{ clients|length }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 border border-gray-200">
+        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">📦</div>
+        <div class="text-sm text-gray-500 mb-1">Total Produits</div>
+        <div class="text-2xl font-bold">0</div>
+    </div>
+
 </div>
+
+{# Raccourcis #}
+<div class="grid grid-cols-3 gap-4">
+
+    <a href="#" class="bg-blue-50 border border-blue-200 rounded-xl p-5 flex justify-between items-center hover:border-blue-400">
+        <div>
+            <div class="font-semibold text-blue-600">Créer une facture</div>
+            <div class="text-sm text-blue-400">Nouvelle prestation</div>
+        </div>
+        <span class="text-blue-600">→</span>
+    </a>
+
+    <a href="{{ path('app_client_new') }}" class="bg-white border border-gray-200 rounded-xl p-5 flex justify-between items-center hover:border-blue-400">
+        <div>
+            <div class="font-semibold">Ajouter un client</div>
+            <div class="text-sm text-gray-500">Gérer le répertoire</div>
+        </div>
+        <span>→</span>
+    </a>
+
+    <a href="{{ path('app_product_new') }}" class="bg-white border border-gray-200 rounded-xl p-5 flex justify-between items-center hover:border-blue-400">
+        <div>
+            <div class="font-semibold">Créer un produit / service</div>
+            <div class="text-sm text-gray-500">Enrichir le catalogue</div>
+        </div>
+        <span>→</span>
+    </a>
+
+</div>
+
 {% endblock %}
