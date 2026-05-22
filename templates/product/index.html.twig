@@ -1,47 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes produits{% endblock %}
+{% block title %}Produits & Services - FacturSaaS{% endblock %}
 
 {% block body %}
-<div>
-    <h1>Mes produits</h1>
-    <a href="{{ path('app_product_new') }}">+ Nouveau produit</a>
 
-    {% for message in app.flashes('success') %}
-        <div style="color: green;">{{ message }}</div>
-    {% endfor %}
-
-    {% if products is empty %}
-        <p>Aucun produit pour l'instant.</p>
-    {% else %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Description</th>
-                    <th>Prix</th>
-                    <th>Unité</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.description }}</td>
-                    <td>{{ product.price }} €</td>
-                    <td>{{ product.unit }}</td>
-                    <td>
-                        <a href="{{ path('app_product_edit', {id: product.id}) }}">Modifier</a>
-                        <form method="post" action="{{ path('app_product_delete', {id: product.id}) }}" style="display:inline">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_product_' ~ product.id) }}">
-                            <button type="submit" onclick="return confirm('Supprimer ce produit ?')">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h1 class="text-2xl font-bold text-gray-900">Produits & Services</h1>
+    <a href="{{ path('app_product_new') }}" style="background-color: #2563eb; color: white; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-size: 14px; white-space: nowrap;">
+        + Ajouter un produit
+    </a>
 </div>
+
+<div class="bg-white rounded-xl border border-gray-200">
+    <table class="w-full">
+        <thead>
+            <tr class="border-b border-gray-200">
+                <th class="text-left px-6 py-3 text-sm text-gray-500 font-semibold">Nom</th>
+                <th class="text-left px-6 py-3 text-sm text-gray-500 font-semibold">Description</th>
+                <th class="text-left px-6 py-3 text-sm text-gray-500 font-semibold">Prix unitaire</th>
+                <th class="text-left px-6 py-3 text-sm text-gray-500 font-semibold">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="px-6 py-4 font-medium">{{ product.name }}</td>
+                <td class="px-6 py-4 text-gray-500">{{ product.description }}</td>
+                <td class="px-6 py-4">{{ product.price }} € / {{ product.unit }}</td>
+                <td class="px-6 py-4 flex gap-3">
+                    <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="text-blue-600 hover:text-blue-800">✏️</a>
+                    <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Supprimer ce produit ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                        <button type="submit" class="text-red-500 hover:text-red-700">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-6 py-8 text-center text-gray-400">Aucun produit pour l'instant.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
